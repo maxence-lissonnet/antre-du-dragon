@@ -36,6 +36,10 @@ Blackjack européen : le dragon ne reçoit qu'une carte visible au départ et ti
 - Assurance : proposée quand le dragon montre un as, elle coûte la moitié de la mise et paie 2 pour 1.
 - Si le dragon fait blackjack, il rafle toutes les mises, y compris doublées ou séparées. Seul un blackjack du joueur fait égalité.
 
+### En ligne
+
+« Jouer en ligne » place le joueur dans une salle publique de 6 joueurs au plus (salle 1, puis salle 2 si elle est pleine, etc.), sans code ni bots. Mêmes règles, chacun joue sa main à son tour. La donne part quand tout le monde a misé, ou 20 secondes après la première mise ; un joueur qui ne décide pas en 40 secondes reste. Le premier arrivé fait tourner la salle ; s'il part (détecté en 7 secondes environ), le plus ancien joueur restant prend le relais, la donne est annulée et les mises rendues.
+
 ## Organisation du code
 
 Le HTML, le CSS et le JS sont séparés. Les scripts sont « classiques » (pas de modules ES) pour que le jeu s'ouvre d'un double-clic, sans serveur. Ils partagent un seul espace de noms global, `window.DragonJack`.
@@ -51,15 +55,18 @@ js/
   core/rules.js         règles pures du blackjack européen (testées)
   core/stats.js         statistiques du joueur (testées)
   core/game.js          déroulement d'une donne (mise → donne → assurance → mains du joueur → dragon → paiement)
+  core/table.js         règles pures de la table à plusieurs places, pour le jeu en ligne (testées)
   scene/textures.js     cartes, jetons et tapis dessinés dans des <canvas>
   scene/gold-rain.js    pluie d'or du blackjack
   scene/streak-effects.js sacre du joueur et vol du trésor (séries de 10)
   scene/environment.js  table en pierre et tapis, disposition du jeu
   scene/table-pieces.js cartes, jetons, sabot, défausse, mélange
+  scene/party-pieces.js cartes de chaque place, en ligne
   scene/stage.js        moteur de rendu, caméra adaptée à l'écran, boucle d'animation
   ui/audio.js           sons synthétisés (Web Audio), aucun fichier audio
   ui/hud.js             interface HTML par-dessus la scène
   main.js               assemble le tout et branche les commandes
+  party.js              salles publiques en ligne : recherche d'une place, hôte, reprise de la salle
 tests/                  tests des règles et des statistiques
 ```
 

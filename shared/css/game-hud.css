@@ -281,3 +281,45 @@
     font-size: 2.25rem;
   }
 }
+
+/* Retour à la salle du dragon : toujours visible, même sur les écrans d'accueil des jeux et les salons. */
+.home-link {
+  position: fixed;
+  top: max(var(--space-3), env(safe-area-inset-top));
+  left: var(--gutter);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--touch-size);
+  padding: 0 var(--space-3) 0 var(--space-2);
+  border: 1px solid var(--color-gold-deep);
+  border-radius: 999px;
+  background: var(--panel-bg);
+  color: var(--color-gold-pale);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.home-link svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home-link:hover {
+  border-color: var(--color-gold-pale);
+}
+
+.home-link:focus-visible {
+  outline: 2px solid var(--color-gold-pale);
+  outline-offset: 2px;
+}
+
+/* Ce qui est en haut à gauche passe sous le bouton d'accueil. */
+.hud-top > :first-child {
+  margin-top: calc(var(--touch-size) + var(--space-2));
+}

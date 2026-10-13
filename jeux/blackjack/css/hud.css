@@ -202,6 +202,12 @@
   color: #9affb4;
 }
 
+.party-room {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
 .party-step {
   display: grid;
   justify-items: center;
@@ -221,7 +227,13 @@
     font-size: var(--text-md);
   }
 
-  .party-step {
+  .party-room {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.party-step {
     gap: var(--space-1);
   }
 
@@ -230,5 +242,23 @@
     max-width: 23vw;
     padding: 2px var(--space-1);
     font-size: 0.7rem;
+  }
+
+  /* À 5 ou 6 joueurs, on garde seulement le nom et le total. */
+  #party-labels[data-count="5"] .party-seat,
+  #party-labels[data-count="6"] .party-seat {
+    max-width: 16vw;
+    font-size: 0.62rem;
+  }
+
+  #party-labels[data-count="5"] .party-seat-bet,
+  #party-labels[data-count="6"] .party-seat-bet {
+    display: none;
+  }
+
+  .party-seat-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

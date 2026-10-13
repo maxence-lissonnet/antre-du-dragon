@@ -1,19 +1,19 @@
 /*
- * Profil du joueur, commun à tous les jeux de l'antre : trésor (pièces d'or) et dragon choisi.
+ * Profil du joueur, commun à tous les jeux de l'antre : trésor (pièces d'or), dragon choisi et nom en ligne.
  * Tout est gardé dans le navigateur ; les anciennes sauvegardes du blackjack sont reprises.
  */
 (function (root) {
   'use strict';
 
   const STARTING_TREASURE = 1000;
-  const KEYS = { treasure: 'antre-du-dragon.tresor', dragon: 'antre-du-dragon.dragon' };
+  const KEYS = { treasure: 'antre-du-dragon.tresor', dragon: 'antre-du-dragon.dragon', name: 'antre-du-dragon.nom' };
   // Clés utilisées avant la création de la salle des jeux, quand le blackjack était seul.
   const LEGACY_KEYS = { treasure: 'blackjack-dragon.balance', dragon: 'blackjack-dragon.dragon' };
 
   function read(name) {
     try {
       const value = root.localStorage.getItem(KEYS[name]);
-      return value !== null ? value : root.localStorage.getItem(LEGACY_KEYS[name]);
+      return value !== null || !LEGACY_KEYS[name] ? value : root.localStorage.getItem(LEGACY_KEYS[name]);
     } catch (error) {
       return null;
     }
@@ -39,5 +39,7 @@
     saveTreasure: (amount) => write('treasure', amount),
     loadDragon: () => read('dragon'),
     saveDragon: (name) => write('dragon', name),
+    loadName: () => read('name') || '',
+    saveName: (name) => write('name', name),
   };
 })(window);

@@ -25,9 +25,6 @@
         <span class="treasure-amount"><span class="coin" aria-hidden="true"></span><span id="balance">0</span><span class="visually-hidden"> pièces d’or</span></span>
       </p>
       <div class="hud-tools">
-        <a class="icon-button" href="../../index.html" aria-label="Retour à la salle des jeux">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-        </a>
         <button class="icon-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="Couper le son">
           <svg class="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
           <svg class="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
@@ -89,9 +86,18 @@
         </div>
       </div>
 
-      <div class="dock-panel" id="lobby-panel" hidden></div>
+      <div class="dock-panel" id="online-panel" hidden>
+        <form class="lobby" id="online-form">
+          <label class="lobby-label">Ton nom
+            <input class="lobby-input" id="online-name" maxlength="16" autocomplete="nickname" required>
+          </label>
+          <p class="lobby-text">Tu rejoins une salle ouverte à tous (6 joueurs au plus). Si elle est pleine, une nouvelle salle s’ouvre.</p>
+          <button class="button button-primary" type="submit">Rejoindre une salle</button>
+        </form>
+      </div>
 
       <div class="dock-panel" id="party-panel" hidden>
+        <p class="party-room" id="party-room"></p>
         <p class="party-turn" id="party-turn" aria-live="polite"></p>
         <div class="party-step" id="party-bet" hidden>
           <div class="bet-picker" id="party-bets" role="group" aria-label="Mise"></div>
@@ -121,7 +127,7 @@
       <h1 class="intro-title" id="intro-title">Blackjack du Dragon</h1>
       <p class="intro-text">Le dragon tient la table et garde son trésor. Approche-toi de 21 sans jamais le dépasser, et il te paiera en or.</p>
       <button class="button button-primary button-large" id="start" type="button" disabled>Le dragon s’éveille…</button>
-      <button class="button button-large" id="party-start" type="button" disabled>Jouer à plusieurs</button>
+      <button class="button button-large" id="party-start" type="button" disabled>Jouer en ligne</button>
       <p class="intro-note">1 000 pièces offertes pour commencer. Ce sont des pièces imaginaires : aucun argent réel n’est en jeu.</p>
     </div>
   </section>
@@ -138,7 +144,7 @@
       <li>Au-delà de 21, tu perds aussitôt. Le dragon tire jusqu’à 16 et reste à partir de 17.</li>
       <li>Une victoire paie 1 pour 1. Un blackjack (as + carte à 10 dès la donne) paie 3 pour 2. Un 21 après une séparation n’est pas un blackjack.</li>
       <li>Si le dragon fait blackjack, il rafle toutes tes mises, y compris celles doublées ou séparées. Seul ton propre blackjack fait égalité.</li>
-      <li><strong>À plusieurs</strong> (2 à 4 places, bots ou amis en ligne avec un code d’invitation) : chacun mise depuis son propre trésor et joue sa main à son tour contre le dragon.</li>
+      <li><strong>En ligne</strong> : tu rejoins directement une salle ouverte à tous, de 6 joueurs au plus (une nouvelle salle s’ouvre quand elles sont pleines). Chacun mise depuis son propre trésor et joue sa main à son tour contre le dragon. Si tu arrives pendant une donne, tu joues à la suivante.</li>
       <li>Le sabot contient 8 jeux de cartes. Une carte de coupe rouge est glissée vers les trois quarts : quand elle sort, le dragon finit la donne puis remélange. Après chaque mélange, il brûle les 5 premières cartes.</li>
     </ul>
     <button class="button button-primary" id="rules-close" type="button">Retour à la table</button>
@@ -211,6 +217,11 @@
     <p id="fallback-message"></p>
   </section>
 
+  <a class="home-link" href="../../index.html">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    Accueil
+  </a>
+
   <noscript><p class="fallback">Ce jeu a besoin de JavaScript pour fonctionner.</p></noscript>
 
   <script src="../../shared/vendor/three.min.js" defer></script>
@@ -236,7 +247,6 @@
   <script src="js/core/game.js" defer></script>
   <script src="js/scene/party-pieces.js" defer></script>
   <script src="../../shared/js/net.js" defer></script>
-  <script src="../../shared/js/lobby.js" defer></script>
   <script src="js/party.js" defer></script>
   <script src="js/main.js" defer></script>
 </body>

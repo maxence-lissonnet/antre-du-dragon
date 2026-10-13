@@ -15,8 +15,8 @@
   const CARD_LIFT = 0.006;
   const DEAL_STAGGER = 0.28;
   // Écart entre les places selon leur nombre, pour rester sur le tapis (plus serré sur un écran étroit).
-  const SEAT_SPACING = { 1: 0, 2: 3.4, 3: 3, 4: 2.45 };
-  const NARROW_SEAT_SPACING = { 1: 0, 2: 2.4, 3: 1.95, 4: 1.55 };
+  const SEAT_SPACING = { 1: 0, 2: 3.4, 3: 3, 4: 2.45, 5: 1.95, 6: 1.62 };
+  const NARROW_SEAT_SPACING = { 1: 0, 2: 2.4, 3: 1.95, 4: 1.55, 5: 1.25, 6: 1.05 };
   const NARROW_SCREEN = 600;
   const HAND_SPACING = 0.95;
   const CARD_SPACING = { single: 0.36, split: 0.24 };
@@ -54,8 +54,9 @@
       if (seatIndex < 0) {
         return new THREE.Vector3((cardIndex - (cardCount - 1) / 2) * LAYOUT.cardSpacing, 0.02 + cardIndex * CARD_LIFT, LAYOUT.dealerCards.z);
       }
-      const spacing = handCount > 1 || (isNarrow() && seatCount > 2) ? CARD_SPACING.split : CARD_SPACING.single;
-      const handX = seatX(seatIndex) + (handIndex - (handCount - 1) / 2) * HAND_SPACING;
+      const crowded = seatCount > 4 || (isNarrow() && seatCount > 2);
+      const spacing = handCount > 1 || crowded ? CARD_SPACING.split : CARD_SPACING.single;
+      const handX = seatX(seatIndex) + (handIndex - (handCount - 1) / 2) * (seatCount > 4 ? HAND_SPACING * 0.7 : HAND_SPACING);
       return new THREE.Vector3(handX + (cardIndex - (cardCount - 1) / 2) * spacing, 0.02 + cardIndex * CARD_LIFT, LAYOUT.playerCards.z + cardIndex * 0.05);
     }
 

@@ -45,14 +45,81 @@
   pointer-events: none;
 }
 
+/* Tableau de bord du joueur local, sous le bandeau du tour. */
+.seat-label.is-local {
+  position: fixed;
+  top: calc(max(var(--space-3), env(safe-area-inset-top)) + var(--touch-size) + 3.25rem);
+  left: var(--gutter);
+  right: auto;
+}
+
 .seat-label[data-active="true"] {
   border-color: var(--color-gold-pale);
   box-shadow: 0 0 16px rgba(224, 166, 58, 0.45);
 }
 
+.seat-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+/* Pastille à la couleur de la voiture du joueur sur la route. */
+.seat-car {
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 3px;
+  background: var(--car-color, #888);
+}
+
 .seat-name {
   font-family: var(--font-display);
   color: var(--color-gold-pale);
+}
+
+/* Panneaux : feu, limitation, attaque subie (cadre rouge) et bottes (cadre doré). */
+.seat-signs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.seat-light {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #222;
+  border-radius: 50%;
+  background: #d8342a;
+  box-shadow: 0 0 8px rgba(216, 52, 42, 0.8);
+}
+
+.seat-light[data-state="green"] {
+  background: #3ad46a;
+  box-shadow: 0 0 8px rgba(58, 212, 106, 0.8);
+}
+
+.seat-sign-card {
+  width: 30px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+}
+
+.seat-sign-card.is-hazard {
+  border-color: #ff6a4a;
+}
+
+.seat-sign-card.is-safety {
+  border-color: var(--color-gold-pale);
+}
+
+/* Botte posée en coup-fourré : de travers, comme sur la table. */
+.seat-sign-card.is-coup-fourre {
+  transform: rotate(-12deg);
 }
 
 .seat-km {
@@ -201,5 +268,26 @@
 @media (min-width: 768px) {
   .hand-card {
     width: 92px;
+  }
+
+  .seat-sign-card {
+    width: 38px;
+  }
+}
+
+/* Sur téléphone, étiquettes plus compactes pour que les quatre joueurs tiennent. */
+@media (max-width: 600px) {
+  .seat-label {
+    min-width: 0;
+    max-width: 30vw;
+    padding: 2px var(--space-1);
+  }
+
+  .seat-status {
+    display: none;
+  }
+
+  .seat-sign-card {
+    width: 22px;
   }
 }

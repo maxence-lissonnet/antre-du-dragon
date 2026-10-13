@@ -228,7 +228,7 @@
       document.querySelector('[data-chip]:not(:disabled)')?.focus({ preventScroll: true });
     }
 
-    /* Table à plusieurs : le salon réunit les joueurs, puis party.js mène les donnes. */
+    /* Jeu en ligne : on demande le nom, puis party.js trouve une salle publique et mène les donnes. */
     async function startParty() {
       audio.start();
       $('bet-panel').hidden = true;
@@ -241,19 +241,22 @@
       dragon.awaken();
       intro.hidden = true;
       pieces.shoeChanged(DJ.rules.DECK_COUNT * 52);
-      $('lobby-panel').hidden = false;
-      DJ.createLobby({
-        container: $('lobby-panel'),
-        game: 'blackjack',
-        minPlayers: 2,
-        maxPlayers: 4,
-        botNames: ['Le dragonnet', 'La wyverne', 'La salamandre'],
-        notify: hud.notify,
-        onStart: (session) => {
-          $('lobby-panel').hidden = true;
-          const partyPieces = DJ.createPartyPieces({ scene: stage.scene, renderer: stage.renderer, audio });
-          DJ.startBlackjackParty({ session, stage, pieces: partyPieces, dragon, audio, notify: hud.notify });
-        },
+      const nameInput = $('online-name');
+      nameInput.value = DJ.profile.loadName();
+      $('online-panel').hidden = false;
+      nameInput.focus({ preventScroll: true });
+      $('online-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const name = nameInput.value.trim().slice(0, 16);
+        if (!name) return;
+        if (!DJ.net.available()) {
+          hud.notify('Le jeu en ligne n’est pas disponible (bibliothèque réseau absente).');
+          return;
+        }
+        DJ.profile.saveName(name);
+        $('online-panel').hidden = true;
+        const partyPieces = DJ.createPartyPieces({ scene: stage.scene, renderer: stage.renderer, audio });
+        DJ.startBlackjackOnline({ name, stage, pieces: partyPieces, dragon, audio, notify: hud.notify });
       });
     }
 

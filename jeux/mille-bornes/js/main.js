@@ -67,7 +67,7 @@
         target: new THREE.Vector3(0, 0, 0.6),
         direction: new THREE.Vector3(0, 9, 6.5),
         baseDistance: 12,
-        visibleHalfWidth: { landscape: 5.8, portrait: 5.2 },
+        visibleHalfWidth: { landscape: 6.7, portrait: 6.3 },
         introOffset: new THREE.Vector3(0, 4, 6),
       },
       mounds: MOUNDS,
@@ -87,12 +87,46 @@
 
     // ---- Affichage (commun à l'hôte, au solo et aux invités) ----
 
+    function element(tag, className) {
+      const node = document.createElement(tag);
+      node.className = className;
+      return node;
+    }
+
+    /* Petite carte d'un « panneau » (attaque subie, limitation, botte), avec son nom pour les lecteurs d'écran. */
+    function signCard(card, extraClass = '') {
+      const image = element('img', `seat-sign-card ${extraClass}`.trim());
+      image.src = cards.cardImage(card, rules.LABELS);
+      image.alt = rules.LABELS[card.type];
+      image.title = rules.LABELS[card.type];
+      return image;
+    }
+
+    /* Panneaux d'un joueur : son feu, sa limitation, l'attaque qu'il subit et ses bottes. */
+    function seatSigns(player) {
+      const signs = [];
+      const rolling = rules.isRolling(player);
+      const light = element('span', 'seat-light');
+      light.dataset.state = rolling ? 'green' : 'red';
+      light.title = rolling ? 'Feu vert : il roule' : 'À l’arrêt';
+      light.append(Object.assign(element('span', 'visually-hidden'), { textContent: light.title }));
+      signs.push(light);
+      const battle = rules.top(player.battle);
+      if (battle && battle.kind === 'hazard' && battle.type !== 'redLight') signs.push(signCard(battle, 'is-hazard'));
+      if (rules.isLimited(player)) signs.push(signCard(rules.top(player.speed), 'is-hazard'));
+      player.safeties.forEach((entry) => signs.push(signCard(entry.card, entry.coupFourre ? 'is-safety is-coup-fourre' : 'is-safety')));
+      return signs;
+    }
+
     function renderSeatLabels() {
       const container = $('seat-labels');
       while (labels.length < view.players.length) {
-        const label = document.createElement('div');
-        label.className = 'seat-label';
-        label.innerHTML = '<div class="seat-name"></div><div class="seat-km"><span></span></div><div class="seat-status"></div>';
+        const label = element('div', 'seat-label');
+        const head = element('div', 'seat-head');
+        head.append(element('span', 'seat-car'), element('span', 'seat-name'));
+        const km = element('div', 'seat-km');
+        km.append(element('span', ''));
+        label.append(head, km, element('div', 'seat-status'), element('div', 'seat-signs'));
         container.append(label);
         labels.push(label);
       }
@@ -100,11 +134,13 @@
         const label = labels[index];
         const status = statusOf(player);
         const handCount = typeof player.hand === 'number' ? `, ${player.hand} cartes` : '';
+        label.style.setProperty('--car-color', table.carColor(index));
         label.querySelector('.seat-name').textContent = `${player.name}${index === session.localIndex ? ' (toi)' : ''}`;
         label.querySelector('.seat-km span').style.width = `${(player.km / rules.GOAL) * 100}%`;
         const statusLine = label.querySelector('.seat-status');
-        statusLine.textContent = `${player.km} bornes. ${status.text}${handCount}`;
+        statusLine.textContent = `${player.km} km. ${status.text}${handCount}`;
         statusLine.dataset.alert = String(status.alert);
+        label.querySelector('.seat-signs').replaceChildren(...seatSigns(player));
         label.dataset.active = String(index === view.turn && view.phase !== 'over');
       });
     }
@@ -112,7 +148,13 @@
     function placeSeatLabels() {
       if (!view) return;
       labels.forEach((label, index) => {
-        const { x, y } = stage.projectToScreen(table.seatAnchor(index, index === session.localIndex));
+        // Le joueur local a son tableau de bord fixe en haut de l'écran ; les autres suivent leur place.
+        label.classList.toggle('is-local', index === session.localIndex);
+        if (index === session.localIndex) {
+          label.style.transform = '';
+          return;
+        }
+        const { x, y } = stage.projectToScreen(table.seatAnchor(index, false));
         label.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translate(-50%, -50%)`;
       });
     }

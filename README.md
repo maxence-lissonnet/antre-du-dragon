@@ -4,12 +4,12 @@ Une salle de mini-jeux en 3D. Le dragon, couché sur sa montagne d'or, veille su
 
 | Jeu | Principe |
 | --- | --- |
-| Blackjack | Blackjack européen contre le dragon croupier (séparer, doubler, assurance). Seul, ou à plusieurs (2 à 4 places, bots et/ou amis en ligne) : chacun mise depuis son propre trésor. |
+| Blackjack | Blackjack européen contre le dragon croupier (séparer, doubler, assurance). Seul, ou en ligne dans une salle publique de 6 joueurs au plus (sans bots) : chacun mise depuis son propre trésor. |
 | Machine à sous | 3 rouleaux, 5 lignes, mise de 10 à 100, jackpot qui grossit ; on attrape le levier à la souris ou au doigt, on le tire et on le relâche. |
 | Vol du trésor | Le dragon dort : chaque objet volé fait monter le butin et le risque de réveil. On s'enfuit quand on veut. |
 | Memory des écailles | Duel contre le dragon, qui joue avec sa propre mémoire (meilleure en difficile). Chaque paire ratée coûte une vie ; plus de paires que lui double la mise. À plusieurs (2 à 4, bots et/ou amis en ligne) : sans mise ni vies, le plus de paires gagne. |
 | Supaplex | Une seule porte : on choisit en entrant la version originale ou la version dragon. 8 niveaux d'initiation (une mécanique chacun) puis 6 grands circuits de 40 × 20 cases dans le style d'origine, tous créés pour l'antre. Chaque niveau réussi la première fois rapporte de l'or. |
-| Mille Bornes | Règles françaises (106 cartes, attaques, parades, bottes et coups-fourrés), une manche à 1 000 bornes pour 2 à 4 joueurs, bots et/ou amis en ligne, sans mise. |
+| Mille Bornes | Règles françaises (106 cartes, attaques, parades, bottes et coups-fourrés), une manche à 1 000 bornes pour 2 à 4 joueurs, bots et/ou amis en ligne, sans mise. Une route fait le tour de la table avec une voiture par joueur ; chaque étiquette montre son feu, sa limitation, l'attaque subie et ses bottes. |
 
 ## Jouer
 
@@ -22,7 +22,9 @@ Ouvre `index.html` dans un navigateur récent (Chrome, Edge, Firefox ou Safari).
 
 ### Jouer en ligne avec des amis
 
-Mille Bornes, le blackjack (« Jouer à plusieurs ») et le memory (« Jouer à plusieurs ») ont un salon :
+**Blackjack** : « Jouer en ligne » demande ton nom puis te place directement dans une salle publique (salle 1, salle 2…), sans code. Une salle accueille 6 joueurs ; quand elle est pleine, le suivant ouvre la salle d'après. Si tu arrives pendant une donne, tu joues à la suivante. Le premier arrivé fait tourner la salle ; s'il part, le plus ancien joueur restant prend le relais (la donne en cours est annulée et les mises sont rendues).
+
+**Mille Bornes et memory** (« Jouer à plusieurs ») ont un salon :
 
 - **Contre des bots** : 1 à 3 adversaires sur ton appareil, sans internet.
 - **Créer une partie en ligne** : le jeu affiche un code de 6 caractères à donner à tes amis ; tu peux compléter avec des bots, puis lancer.
@@ -58,11 +60,11 @@ shared/               commun à la salle et à tous les jeux
   js/lair-scene.js    scène de jeu toute prête : grotte, lumières, dragon
   js/dragon.js        le dragon, ses 5 apparences et ses animations (dont dormir et se réveiller)
   js/gold-rain.js     pluie d'or des grands gains
-  js/net.js           jeu en ligne : créer une partie avec un code, la rejoindre, échanger des messages
+  js/net.js           jeu en ligne : partie privée avec un code, ou salle publique numérotée ; échange des messages
   js/lobby.js         salon commun : bots, création et arrivée des joueurs, lancement de la partie
 jeux/
   blackjack/          blackjack européen (voir son README) ; à plusieurs : core/table.js (règles multi-places),
-                      scene/party-pieces.js (cartes de chaque place), party.js (déroulement en ligne ou avec bots)
+                      scene/party-pieces.js (cartes de chaque place), party.js (salles publiques en ligne)
   machine-a-sous/     core/slots.js (règles), scene/machine.js et symbols.js (machine 3D)
   vol-du-tresor/      core/heist.js (règles), scene/loot.js (trésors 3D)
   memory-des-ecailles/ core/memory.js (règles et mémoire du dragon), scene/tiles.js (dalle et écailles 3D),
