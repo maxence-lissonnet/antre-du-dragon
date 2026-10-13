@@ -1,0 +1,224 @@
+/* Salle des jeux : interface posée sur la scène 3D (mobile d'abord). */
+
+.hall {
+  position: fixed;
+  inset: 0;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+.stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Haut : nom de l'antre et trésor commun à tous les jeux. */
+.hall-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: max(var(--space-3), env(safe-area-inset-top)) var(--gutter) var(--space-3);
+  pointer-events: none;
+}
+
+.hall-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 7vw, 3rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-gold-pale);
+  text-shadow: 0 0 2px #fff1c4, 0 0 18px rgba(242, 85, 29, 0.75), 0 0 48px rgba(242, 85, 29, 0.35);
+}
+
+.treasure {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+}
+
+.treasure-label {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+.treasure-amount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-gold-pale);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 14px rgba(224, 166, 58, 0.45);
+}
+
+.coin {
+  width: 0.75em;
+  height: 0.75em;
+  border: 2px solid var(--color-gold-pale);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--color-gold-pale), var(--color-gold) 55%, var(--color-gold-deep));
+}
+
+/* Bas : une plaque par jeu, synchronisée avec les alcôves 3D. */
+.game-shelf {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-4) 0 max(var(--space-3), env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(20, 12, 10, 0) 0%, rgba(20, 12, 10, 0.85) 55%);
+}
+
+/* Encadré compact sur une ligne : le jeu choisi à gauche, « Entrer » à droite, une flèche de chaque côté. */
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding-inline: var(--gutter);
+}
+
+.carousel-arrow {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: var(--touch-size);
+  height: var(--touch-size);
+  border: 1px solid var(--color-stone-light);
+  border-radius: 50%;
+  background: var(--panel-bg);
+  cursor: pointer;
+}
+
+.carousel-arrow:hover {
+  border-color: var(--color-gold-pale);
+}
+
+.carousel-arrow svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.game-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-3);
+  width: min(100%, 30rem);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-gold-deep);
+  border-radius: var(--radius-plaque);
+  background: rgba(28, 20, 17, 0.88);
+}
+
+.game-card .button {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+}
+
+.game-count {
+  color: var(--color-bone-muted);
+  font-size: 0.75rem;
+}
+
+.game-name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--color-gold-pale);
+}
+
+/* La description tient sur une ligne ; trop longue, elle se termine par des points de suspension. */
+.game-tagline {
+  overflow: hidden;
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.toast {
+  position: absolute;
+  top: 5.5rem;
+  left: 50%;
+  max-width: calc(100vw - 2 * var(--gutter));
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, -6px);
+  transition: opacity 200ms ease, transform 200ms ease;
+  pointer-events: none;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Fondu au noir pendant que la caméra plonge dans l'alcôve choisie. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cave);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 900ms ease 500ms;
+}
+
+.is-entering .veil {
+  opacity: 1;
+}
+
+.is-entering .game-shelf,
+.is-entering .hall-top {
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.fallback {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: var(--space-4);
+  padding: var(--gutter);
+  background: var(--color-cave);
+  text-align: center;
+}
+
+.fallback h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--color-gold-pale);
+}
+
+@media (min-width: 768px) {
+  .game-name {
+    font-size: var(--text-xl);
+  }
+
+  .treasure-amount {
+    font-size: 2.25rem;
+  }
+}

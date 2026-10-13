@@ -1,0 +1,9 @@
+{
+  "name": "antre-du-dragon",
+  "version": "1.0.0",
+  "private": true,
+  "description": "L'antre du dragon : salle 3D de mini-jeux (blackjack européen…), Three.js sans build.",
+  "scripts": {
+    "test": "node --test jeux/blackjack/tests/rules.test.js jeux/blackjack/tests/stats.test.js jeux/blackjack/tests/table.test.js jeux/machine-a-sous/tests/slots.test.js jeux/vol-du-tresor/tests/heist.test.js jeux/memory-des-ecailles/tests/memory.test.js jeux/supaplex/tests/engine.test.js jeux/supaplex/tests/levels.test.js jeux/mille-bornes/tests/rules.test.js"
+  }
+}

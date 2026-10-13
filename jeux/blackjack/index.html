@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Blackjack du Dragon</title>
+  <meta name="description" content="Un blackjack en 3D dans l’antre d’un dragon : mise tes pièces d’or et approche-toi de 21 sans le dépasser.">
+  <meta name="theme-color" content="#140c0a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=Grenze+Gotisch:wght@500;700&display=swap">
+  <link rel="stylesheet" href="../../shared/css/base.css">
+  <link rel="stylesheet" href="../../shared/css/game-hud.css">
+  <link rel="stylesheet" href="../../shared/css/game-overlays.css">
+  <link rel="stylesheet" href="../../shared/css/lobby.css">
+  <link rel="stylesheet" href="css/hud.css">
+</head>
+<body class="is-intro">
+  <main class="game">
+    <div class="stage" id="stage"></div>
+
+    <header class="hud-top">
+      <p class="treasure">
+        <span class="treasure-label">Ton trésor</span>
+        <span class="treasure-amount"><span class="coin" aria-hidden="true"></span><span id="balance">0</span><span class="visually-hidden"> pièces d’or</span></span>
+      </p>
+      <div class="hud-tools">
+        <a class="icon-button" href="../../index.html" aria-label="Retour à la salle des jeux">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </a>
+        <button class="icon-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="Couper le son">
+          <svg class="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+          <svg class="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+        </button>
+        <button class="icon-button" id="stats-open" type="button" aria-label="Statistiques">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        </button>
+        <button class="icon-button" id="settings-open" type="button" aria-label="Paramètres">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+        </button>
+        <button class="icon-button" id="rules-open" type="button" aria-label="Règles">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/><circle cx="12" cy="12" r="9.5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <p class="hand-label" id="dealer-total" hidden><span>Dragon</span><strong>0</strong></p>
+    <div id="player-totals"></div>
+    <div id="party-labels"></div>
+
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+
+    <section class="dock" aria-label="Actions de jeu">
+      <div class="result" id="result" role="status" aria-live="assertive" hidden>
+        <p class="result-title" id="result-title"></p>
+        <p class="result-amount" id="result-amount"></p>
+      </div>
+
+      <div class="dock-panel" id="bet-panel">
+        <p class="bet-readout">Mise <strong id="bet-amount">0</strong></p>
+        <div class="chip-row" id="chip-row" role="group" aria-label="Ajouter un jeton à la mise">
+          <button class="chip-button chip-10" type="button" data-chip="10" aria-label="Miser 10 pièces">10</button>
+          <button class="chip-button chip-25" type="button" data-chip="25" aria-label="Miser 25 pièces">25</button>
+          <button class="chip-button chip-100" type="button" data-chip="100" aria-label="Miser 100 pièces">100</button>
+          <button class="chip-button chip-500" type="button" data-chip="500" aria-label="Miser 500 pièces">500</button>
+        </div>
+        <button class="button button-primary button-wide" id="restore" type="button" hidden>Emprunter 1 000 pièces au dragon</button>
+        <div class="action-row">
+          <button class="button button-quiet" id="clear-bet" type="button">Effacer</button>
+          <button class="button button-quiet" id="rebet" type="button">Remiser</button>
+          <button class="button button-primary" id="deal" type="button">Distribuer <kbd>Entrée</kbd></button>
+        </div>
+      </div>
+
+      <div class="dock-panel" id="insurance-panel" hidden>
+        <p class="dock-question">Le dragon montre un as. T’assurer contre son blackjack pour <strong id="insurance-cost">0 pièce</strong> ?</p>
+        <div class="action-row">
+          <button class="button" id="insurance-decline" type="button">Non merci <kbd>N</kbd></button>
+          <button class="button button-primary" id="insurance-accept" type="button">M’assurer <kbd>A</kbd></button>
+        </div>
+      </div>
+
+      <div class="dock-panel" id="play-panel" hidden>
+        <div class="action-row">
+          <button class="button button-primary" id="hit" type="button">Tirer <kbd>T</kbd></button>
+          <button class="button" id="stand" type="button">Rester <kbd>R</kbd></button>
+          <button class="button" id="double" type="button">Doubler <kbd>D</kbd></button>
+          <button class="button" id="split" type="button">Séparer <kbd>S</kbd></button>
+        </div>
+      </div>
+
+      <div class="dock-panel" id="lobby-panel" hidden></div>
+
+      <div class="dock-panel" id="party-panel" hidden>
+        <p class="party-turn" id="party-turn" aria-live="polite"></p>
+        <div class="party-step" id="party-bet" hidden>
+          <div class="bet-picker" id="party-bets" role="group" aria-label="Mise"></div>
+          <button class="button button-primary button-wide" id="party-restore" type="button" hidden>Emprunter 1 000 pièces au dragon</button>
+          <button class="button button-primary" id="party-bet-confirm" type="button">Miser <kbd>Entrée</kbd></button>
+        </div>
+        <div class="party-step" id="party-insurance" hidden>
+          <p class="dock-question">T’assurer contre son blackjack pour <strong id="party-insurance-cost">0 pièce</strong> ?</p>
+          <div class="action-row">
+            <button class="button" id="party-insurance-no" type="button">Non merci <kbd>N</kbd></button>
+            <button class="button button-primary" id="party-insurance-yes" type="button">M’assurer <kbd>A</kbd></button>
+          </div>
+        </div>
+        <div class="action-row" id="party-play" hidden>
+          <button class="button button-primary" id="party-hit" type="button">Tirer <kbd>T</kbd></button>
+          <button class="button" id="party-stand" type="button">Rester <kbd>R</kbd></button>
+          <button class="button" id="party-double" type="button">Doubler <kbd>D</kbd></button>
+          <button class="button" id="party-split" type="button">Séparer <kbd>S</kbd></button>
+        </div>
+        <button class="button button-quiet lobby-small" id="party-quit" type="button">Quitter la table</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="intro" id="intro" aria-labelledby="intro-title">
+    <div class="intro-content">
+      <h1 class="intro-title" id="intro-title">Blackjack du Dragon</h1>
+      <p class="intro-text">Le dragon tient la table et garde son trésor. Approche-toi de 21 sans jamais le dépasser, et il te paiera en or.</p>
+      <button class="button button-primary button-large" id="start" type="button" disabled>Le dragon s’éveille…</button>
+      <button class="button button-large" id="party-start" type="button" disabled>Jouer à plusieurs</button>
+      <p class="intro-note">1 000 pièces offertes pour commencer. Ce sont des pièces imaginaires : aucun argent réel n’est en jeu.</p>
+    </div>
+  </section>
+
+  <dialog class="sheet" id="rules" aria-labelledby="rules-title">
+    <h2 id="rules-title">Les règles de la table</h2>
+    <p class="sheet-intro">Blackjack européen : le dragon ne reçoit qu’une carte au départ et tire la suivante après ton tour.</p>
+    <ul class="rules-list">
+      <li>Mise au moins 10 pièces avec les jetons, puis distribue. Tu reçois deux cartes, le dragon une seule.</li>
+      <li>Les cartes de 2 à 10 valent leur chiffre, les figures valent 10, l’as vaut 1 ou 11.</li>
+      <li><strong>Tirer</strong> : prendre une carte de plus. <strong>Rester</strong> : garder ta main. <strong>Doubler</strong> : doubler ta mise sur tes deux premières cartes et recevoir une seule carte.</li>
+      <li><strong>Séparer</strong> : avec deux cartes de même valeur, en faire deux mains, chacune avec une mise identique. Tu peux recommencer autant de fois que tu reçois une paire. Deux as séparés reçoivent une seule carte chacun.</li>
+      <li><strong>Assurance</strong> : quand le dragon montre un as, tu peux miser la moitié de ta mise contre son blackjack. Elle paie 2 pour 1.</li>
+      <li>Au-delà de 21, tu perds aussitôt. Le dragon tire jusqu’à 16 et reste à partir de 17.</li>
+      <li>Une victoire paie 1 pour 1. Un blackjack (as + carte à 10 dès la donne) paie 3 pour 2. Un 21 après une séparation n’est pas un blackjack.</li>
+      <li>Si le dragon fait blackjack, il rafle toutes tes mises, y compris celles doublées ou séparées. Seul ton propre blackjack fait égalité.</li>
+      <li><strong>À plusieurs</strong> (2 à 4 places, bots ou amis en ligne avec un code d’invitation) : chacun mise depuis son propre trésor et joue sa main à son tour contre le dragon.</li>
+      <li>Le sabot contient 8 jeux de cartes. Une carte de coupe rouge est glissée vers les trois quarts : quand elle sort, le dragon finit la donne puis remélange. Après chaque mélange, il brûle les 5 premières cartes.</li>
+    </ul>
+    <button class="button button-primary" id="rules-close" type="button">Retour à la table</button>
+  </dialog>
+
+  <dialog class="sheet" id="stats" aria-labelledby="stats-title">
+    <h2 id="stats-title">Tes statistiques</h2>
+    <dl class="stats-grid">
+      <div><dt>Mains jouées</dt><dd data-stat="handsPlayed">0</dd></div>
+      <div><dt>Taux de victoire</dt><dd data-stat="winRate">—</dd></div>
+      <div><dt>Gagnées</dt><dd data-stat="handsWon">0</dd></div>
+      <div><dt>Perdues</dt><dd data-stat="handsLost">0</dd></div>
+      <div><dt>Égalités</dt><dd data-stat="handsPushed">0</dd></div>
+      <div><dt>Blackjacks</dt><dd data-stat="blackjacks">0</dd></div>
+      <div><dt>Plus gros gain</dt><dd data-stat="biggestWin">0</dd></div>
+      <div><dt>Meilleure série</dt><dd data-stat="bestStreak">0</dd></div>
+      <div class="stats-wide"><dt>Trésor le plus haut</dt><dd data-stat="highestBalance">0</dd></div>
+    </dl>
+    <div class="sheet-actions">
+      <button class="button button-quiet" id="stats-reset" type="button">Remettre à zéro</button>
+      <button class="button button-primary" id="stats-close" type="button">Retour à la table</button>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="settings" aria-labelledby="settings-title">
+    <h2 id="settings-title">Paramètres</h2>
+    <form class="settings-form" method="dialog">
+      <fieldset class="dragon-picker">
+        <legend>Ton dragon</legend>
+        <p class="sheet-intro">Seule son apparence change : les règles restent les mêmes.</p>
+        <label class="dragon-option">
+          <input type="radio" name="dragon" value="emerald">
+          <span class="dragon-swatch swatch-emerald" aria-hidden="true"></span>
+          <span class="dragon-name">Émeraude</span>
+          <span class="dragon-text">Écailles vert-bronze, souffle de feu.</span>
+        </label>
+        <label class="dragon-option">
+          <input type="radio" name="dragon" value="crimson">
+          <span class="dragon-swatch swatch-crimson" aria-hidden="true"></span>
+          <span class="dragon-name">Rouge de feu</span>
+          <span class="dragon-text">Écailles de braise, flammes ardentes.</span>
+        </label>
+        <label class="dragon-option">
+          <input type="radio" name="dragon" value="shadow">
+          <span class="dragon-swatch swatch-shadow" aria-hidden="true"></span>
+          <span class="dragon-name">Ombre</span>
+          <span class="dragon-text">Noir et violet, flammes d’ombre.</span>
+        </label>
+        <label class="dragon-option">
+          <input type="radio" name="dragon" value="frost">
+          <span class="dragon-swatch swatch-frost" aria-hidden="true"></span>
+          <span class="dragon-name">Glace</span>
+          <span class="dragon-text">Bleu pâle, souffle de givre.</span>
+        </label>
+        <label class="dragon-option">
+          <input type="radio" name="dragon" value="spectral">
+          <span class="dragon-swatch swatch-spectral" aria-hidden="true"></span>
+          <span class="dragon-name">Spectral</span>
+          <span class="dragon-text">Translucide, feu fantôme.</span>
+        </label>
+      </fieldset>
+      <div class="sheet-actions">
+        <button class="button button-primary" type="submit">Retour à la table</button>
+      </div>
+    </form>
+  </dialog>
+
+  <section class="fallback" id="fallback" hidden>
+    <h2>Le dragon reste dans l’ombre</h2>
+    <p id="fallback-message"></p>
+  </section>
+
+  <noscript><p class="fallback">Ce jeu a besoin de JavaScript pour fonctionner.</p></noscript>
+
+  <script src="../../shared/vendor/three.min.js" defer></script>
+  <script src="../../shared/vendor/peerjs.min.js" defer></script>
+  <script src="js/core/rules.js" defer></script>
+  <script src="js/core/table.js" defer></script>
+  <script src="js/core/stats.js" defer></script>
+  <script src="../../shared/js/profile.js" defer></script>
+  <script src="../../shared/js/boot.js" defer></script>
+  <script src="../../shared/js/hud-kit.js" defer></script>
+  <script src="../../shared/js/tween.js" defer></script>
+  <script src="js/scene/textures.js" defer></script>
+  <script src="../../shared/js/particles.js" defer></script>
+  <script src="../../shared/js/lair.js" defer></script>
+  <script src="../../shared/js/gold-rain.js" defer></script>
+  <script src="js/scene/streak-effects.js" defer></script>
+  <script src="js/scene/environment.js" defer></script>
+  <script src="../../shared/js/dragon.js" defer></script>
+  <script src="js/scene/table-pieces.js" defer></script>
+  <script src="../../shared/js/stage.js" defer></script>
+  <script src="../../shared/js/audio.js" defer></script>
+  <script src="js/ui/hud.js" defer></script>
+  <script src="js/core/game.js" defer></script>
+  <script src="js/scene/party-pieces.js" defer></script>
+  <script src="../../shared/js/net.js" defer></script>
+  <script src="../../shared/js/lobby.js" defer></script>
+  <script src="js/party.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Supaplex</title>
+  <meta name="description" content="Supaplex en 3D : ramasse les infotrons, évite les zonks qui tombent et rejoins la sortie. Version classique ou version dragon.">
+  <meta name="theme-color" content="#140c0a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=Grenze+Gotisch:wght@500;700&display=swap">
+  <link rel="stylesheet" href="../../shared/css/base.css">
+  <link rel="stylesheet" href="../../shared/css/game-hud.css">
+  <link rel="stylesheet" href="../../shared/css/game-overlays.css">
+  <link rel="stylesheet" href="css/supaplex.css">
+</head>
+<body>
+  <main class="game">
+    <div class="stage" id="stage"></div>
+
+    <header class="hud-top">
+      <p class="treasure">
+        <span class="treasure-label">Ton trésor</span>
+        <span class="treasure-amount"><span class="coin" aria-hidden="true"></span><span id="balance">0</span><span class="visually-hidden"> pièces d’or</span></span>
+      </p>
+      <dl class="play-stats top-stats" id="top-stats" hidden>
+        <div><dt>Niveau</dt><dd id="level-name">—</dd></div>
+        <div><dt id="collect-label">Infotrons</dt><dd id="collected">0 / 0</dd></div>
+        <div><dt id="disks-label">Disquettes</dt><dd id="disks">0</dd></div>
+      </dl>
+      <div class="hud-tools">
+        <a class="icon-button" href="../../index.html" aria-label="Retour à la salle des jeux">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </a>
+        <button class="icon-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="Couper le son">
+          <svg class="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+          <svg class="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+        </button>
+        <button class="icon-button" id="rules-open" type="button" aria-label="Règles et commandes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/><circle cx="12" cy="12" r="9.5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+
+    <!-- Grand bandeau du conseil, affiché au début de chaque niveau. -->
+    <aside class="hint-banner" id="hint-banner" aria-live="polite" hidden>
+      <p class="hint-label">Conseil</p>
+      <p class="hint-text" id="hint-text"></p>
+    </aside>
+
+
+    <section class="dock" aria-label="Commandes de Supaplex">
+      <div class="result" id="result" role="status" aria-live="assertive" hidden>
+        <p class="result-title" id="result-title"></p>
+        <p class="result-amount" id="result-amount"></p>
+      </div>
+
+      <div class="dock-panel" id="menu-panel">
+        <h1 class="game-title" id="game-title">Supaplex</h1>
+        <ul class="level-list" id="level-list" aria-label="Niveaux"></ul>
+        <button class="button button-primary button-wide" id="restore" type="button" hidden>Emprunter 1 000 pièces au dragon</button>
+        <a class="button button-quiet" href="index.html">Changer de version</a>
+      </div>
+
+      <div class="dock-panel" id="play-panel" hidden>
+        <div class="touch-pad" aria-label="Commandes tactiles">
+          <div class="dpad">
+            <button class="pad-button pad-up" type="button" data-dir="up" aria-label="Haut">▲</button>
+            <button class="pad-button pad-left" type="button" data-dir="left" aria-label="Gauche">◀</button>
+            <button class="pad-button pad-right" type="button" data-dir="right" aria-label="Droite">▶</button>
+            <button class="pad-button pad-down" type="button" data-dir="down" aria-label="Bas">▼</button>
+          </div>
+          <div class="pad-actions">
+            <button class="button" id="snap-toggle" type="button" aria-pressed="false">Aspirer</button>
+            <button class="button" id="drop" type="button">Poser <kbd>Espace</kbd></button>
+          </div>
+        </div>
+        <p class="level-hint" id="level-hint"></p>
+        <!-- Rappel permanent des touches, en bas au centre (écrans avec clavier). -->
+        <ul class="controls-legend" aria-label="Touches">
+          <li><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> se déplacer</li>
+          <li><kbd>Maj</kbd> + flèche aspirer sans bouger</li>
+          <li><kbd>Espace</kbd> poser <span data-term="diskOne">une disquette</span></li>
+          <li><kbd>R</kbd> recommencer</li>
+          <li><kbd>Échap</kbd> niveaux</li>
+        </ul>
+        <div class="action-row">
+          <button class="button" id="restart" type="button">Recommencer <kbd>R</kbd></button>
+          <button class="button button-quiet" id="to-menu" type="button">Niveaux <kbd>Échap</kbd></button>
+          <button class="button button-quiet" id="show-hint" type="button">Revoir le conseil</button>
+        </div>
+      </div>
+
+      <div class="dock-panel" id="end-panel" hidden>
+        <div class="action-row">
+          <button class="button button-primary" id="next" type="button">Niveau suivant <kbd>Entrée</kbd></button>
+          <button class="button" id="retry" type="button">Rejouer</button>
+          <button class="button button-quiet" id="end-menu" type="button">Niveaux</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Choix de la version, quand on arrive sans en avoir choisi une. -->
+  <section class="version-picker" id="version-picker" aria-labelledby="version-title" hidden>
+    <h1 class="version-title" id="version-title">Supaplex</h1>
+    <p class="version-intro">Quelle version veux-tu jouer ? Les niveaux et ta progression sont les mêmes dans les deux.</p>
+    <div class="version-options">
+      <a class="version-option version-classic" href="?version=classique">
+        <span class="version-name">Version originale</span>
+        <span class="version-text">Murphy, infotrons, zonks et circuits verts, fidèles au jeu d’origine.</span>
+      </a>
+      <a class="version-option version-dragon" href="?version=dragon">
+        <span class="version-name">Version dragon</span>
+        <span class="version-text">Un bébé dragon, des rubis, des rochers et des chauves-souris dans l’antre.</span>
+      </a>
+    </div>
+    <a class="button button-quiet" href="../../index.html">Retour à la salle des jeux</a>
+  </section>
+
+  <dialog class="sheet" id="rules" aria-labelledby="rules-title">
+    <h2 id="rules-title">Supaplex</h2>
+    <ul class="rules-list" id="rules-list">
+      <li>Ramasse assez d’<strong data-term="collect">infotrons</strong> pour ouvrir la <strong data-term="exit">sortie</strong>, puis rejoins-la.</li>
+      <li>Tu creuses les <strong data-term="base">circuits</strong> en avançant. Les <strong data-term="zonk">zonks</strong> et les <span data-term="collect">infotrons</span> tombent dans le vide et roulent sur ce qui est arrondi : ne reste jamais dessous !</li>
+      <li>Tu peux pousser <span data-term="zonkOne">un zonk</span> de côté s’il y a de la place derrière. Les ports ne se traversent que dans le sens de la flèche.</li>
+      <li>Les <strong data-term="snik">snik snaks</strong> et les <strong data-term="electron">électrons</strong> longent les murs : leur contact est fatal. Écrase-les sous <span data-term="zonkOne">un zonk</span> ; <span data-term="electronOne">un électron</span> écrasé se change en <span data-term="collect">infotrons</span>.</li>
+      <li><strong data-term="redDisk">Disquette rouge</strong> : ramasse-la, pose-la avec Espace, et éloigne-toi avant qu’elle n’explose. <strong data-term="orangeDisk">Disquette orange</strong> : explose en tombant. <strong data-term="yellowDisk">Disquette jaune</strong> : se pousse, et saute quand tu touches <strong data-term="terminal">le terminal</strong>.</li>
+      <li>Clavier : flèches (ou ZQSD) pour bouger, Maj + flèche pour aspirer sans bouger, Espace pour poser <span data-term="diskOne">une disquette</span>, R pour recommencer.</li>
+      <li>Chaque niveau réussi pour la première fois rapporte des pièces d’or. Ta progression est commune aux deux versions.</li>
+    </ul>
+    <div class="sheet-actions">
+      <button class="button button-primary" id="rules-close" type="button">Retour au jeu</button>
+    </div>
+  </dialog>
+
+  <section class="fallback" id="fallback" hidden>
+    <h2>Le dragon reste dans l’ombre</h2>
+    <p id="fallback-message"></p>
+  </section>
+
+  <noscript><p class="fallback">Ce jeu a besoin de JavaScript pour fonctionner.</p></noscript>
+
+  <script src="../../shared/vendor/three.min.js" defer></script>
+  <script src="../../shared/js/tween.js" defer></script>
+  <script src="../../shared/js/profile.js" defer></script>
+  <script src="../../shared/js/boot.js" defer></script>
+  <script src="../../shared/js/hud-kit.js" defer></script>
+  <script src="../../shared/js/audio.js" defer></script>
+  <script src="../../shared/js/particles.js" defer></script>
+  <script src="../../shared/js/lair.js" defer></script>
+  <script src="../../shared/js/stage.js" defer></script>
+  <script src="js/core/engine.js" defer></script>
+  <script src="js/core/levels.js" defer></script>
+  <script src="js/themes/classic.js" defer></script>
+  <script src="js/themes/dragon.js" defer></script>
+  <script src="js/scene/board.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

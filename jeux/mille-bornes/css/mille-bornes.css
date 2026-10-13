@@ -1,0 +1,205 @@
+/* Mille Bornes : bandeau du tour, étiquettes des joueurs, main de cartes, coup-fourré, scores. */
+
+.turn-banner {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-gold-pale);
+  text-shadow: 0 0 14px rgba(224, 166, 58, 0.45);
+}
+
+.turn-banner[data-mine="true"] {
+  color: #9affb4;
+}
+
+/* Dernière action, juste au-dessus de la barre du bas. */
+.action-log {
+  position: absolute;
+  left: 50%;
+  bottom: 13.5rem;
+  max-width: calc(100vw - 2 * var(--gutter));
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  color: var(--color-bone);
+  font-size: var(--text-sm);
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.action-log:empty {
+  display: none;
+}
+
+/* Étiquette de chaque joueur au-dessus de son coin : nom, bornes et état. */
+.seat-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 9rem;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  text-align: center;
+  pointer-events: none;
+}
+
+.seat-label[data-active="true"] {
+  border-color: var(--color-gold-pale);
+  box-shadow: 0 0 16px rgba(224, 166, 58, 0.45);
+}
+
+.seat-name {
+  font-family: var(--font-display);
+  color: var(--color-gold-pale);
+}
+
+.seat-km {
+  height: 6px;
+  margin: 3px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.seat-km span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #3a8aff, #3aff8a);
+}
+
+.seat-status {
+  color: var(--color-bone-muted);
+  font-size: 0.75rem;
+}
+
+.seat-status[data-alert="true"] {
+  color: #ff8a6a;
+}
+
+/* Main du joueur : les cartes défilent à l'intérieur de la barre sur petit écran. */
+.hand {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-start;
+  max-width: 100%;
+  margin: 0;
+  padding: var(--space-1) 0;
+  overflow-x: auto;
+  list-style: none;
+}
+
+/* Centrée quand elle tient, la main défile depuis sa première carte quand elle déborde. */
+.hand li:first-child {
+  margin-left: auto;
+}
+
+.hand li:last-child {
+  margin-right: auto;
+}
+
+.hand-card {
+  flex: 0 0 auto;
+  width: 74px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: none;
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+.hand-card img {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.hand-card:hover:not(:disabled),
+.hand-card[aria-pressed="true"] {
+  transform: translateY(-8px);
+}
+
+.hand-card[aria-pressed="true"] {
+  border-color: var(--color-gold-pale);
+}
+
+.hand-card[data-playable="false"] img {
+  filter: brightness(0.6);
+}
+
+.hand-card:disabled {
+  cursor: default;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.coup-fourre {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 2px solid var(--color-gold);
+  border-radius: var(--radius-plaque);
+  background: rgba(40, 28, 10, 0.95);
+  text-align: center;
+}
+
+.end-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--color-gold-pale);
+}
+
+/* Tableau des points : une colonne par joueur. */
+.scores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.score-card {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  font-size: var(--text-sm);
+}
+
+.score-card[data-winner="true"] {
+  border-color: var(--color-gold-pale);
+}
+
+.score-card h3 {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--color-gold-pale);
+}
+
+.score-line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--color-bone-muted);
+}
+
+.score-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-1);
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .hand-card {
+    width: 92px;
+  }
+}

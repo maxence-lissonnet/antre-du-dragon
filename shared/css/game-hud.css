@@ -1,0 +1,283 @@
+/* Interface commune aux jeux de l'antre, posée sur la scène 3D (mobile d'abord). */
+
+.game {
+  position: fixed;
+  inset: 0;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+.stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Pendant l'écran d'accueil, l'interface de jeu reste cachée. */
+.is-intro .hud-top,
+.is-intro .dock {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hud-top,
+.dock {
+  transition: opacity 600ms ease 1.6s;
+}
+
+/* Haut de l'écran : trésor et outils. */
+.hud-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: max(var(--space-3), env(safe-area-inset-top)) var(--gutter) var(--space-3);
+  pointer-events: none;
+}
+
+.hud-top > * {
+  pointer-events: auto;
+}
+
+.treasure {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.treasure-label {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+.treasure-amount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-gold-pale);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 14px rgba(224, 166, 58, 0.45);
+}
+
+.coin {
+  width: 0.75em;
+  height: 0.75em;
+  border: 2px solid var(--color-gold-pale);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--color-gold-pale), var(--color-gold) 55%, var(--color-gold-deep));
+}
+
+.hud-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.icon-button,
+.text-button {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-size);
+  min-height: var(--touch-size);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  cursor: pointer;
+}
+
+.text-button {
+  padding-inline: var(--space-4);
+}
+
+.icon-button svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-button .icon-sound-off,
+.icon-button[aria-pressed="true"] .icon-sound-on {
+  display: none;
+}
+
+.icon-button[aria-pressed="true"] .icon-sound-off {
+  display: block;
+}
+
+
+/* Bas de l'écran : mise et actions. */
+.dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-8) var(--gutter) max(var(--space-4), env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(20, 12, 10, 0) 0%, rgba(20, 12, 10, 0.88) 45%);
+  /* Les zones vides de la barre laissent passer les clics vers la scène 3D (objets du bas de l'écran). */
+  pointer-events: none;
+}
+
+.dock button,
+.dock a,
+.dock input,
+.dock label {
+  pointer-events: auto;
+}
+
+.dock-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+
+.dock-question {
+  max-width: 34rem;
+  text-align: center;
+}
+
+.dock-question strong {
+  color: var(--color-gold-pale);
+}
+
+/* Autant de colonnes égales que de boutons. */
+.action-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+  width: 100%;
+}
+
+/* Annonce du résultat : dans la barre du bas, pour laisser la scène au dragon. */
+.result {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+  animation: result-in 320ms ease-out;
+}
+
+@keyframes result-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.result-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 6vw, 2.75rem);
+  line-height: 1.1;
+  color: var(--color-bone);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 24px rgba(0, 0, 0, 0.8);
+}
+
+.result-amount {
+  margin-top: var(--space-1);
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.result[data-tone="win"] .result-title {
+  color: var(--color-gold-pale);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 30px rgba(224, 166, 58, 0.7);
+}
+
+.result[data-tone="win"] .result-amount {
+  color: var(--color-gold);
+}
+
+.result[data-tone="lose"] .result-title {
+  color: #ffb08a;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 30px rgba(242, 85, 29, 0.8);
+}
+
+.result[data-tone="lose"] .result-amount {
+  color: var(--color-ember);
+}
+
+/* Petits messages d'information. */
+.toast {
+  position: absolute;
+  top: 5.5rem;
+  left: 50%;
+  max-width: calc(100vw - 2 * var(--gutter));
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, -6px);
+  transition: opacity 200ms ease, transform 200ms ease;
+  pointer-events: none;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+
+/* Choix de la mise : une rangée de pastilles, une seule active à la fois. */
+.bet-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.bet-option {
+  min-width: var(--touch-size);
+  min-height: var(--touch-size);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-stone-light);
+  border-radius: 999px;
+  background: var(--panel-bg);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.bet-option[aria-pressed="true"] {
+  border-color: var(--color-gold-pale);
+  background: rgba(224, 166, 58, 0.18);
+  color: var(--color-gold-pale);
+}
+
+.bet-option:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (min-width: 768px) {
+  .action-row {
+    width: auto;
+    grid-auto-columns: minmax(130px, auto);
+  }
+
+  .treasure-amount {
+    font-size: 2.25rem;
+  }
+}

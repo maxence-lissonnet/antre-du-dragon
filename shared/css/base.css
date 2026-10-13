@@ -1,0 +1,174 @@
+/* Jetons de design, remise à zéro et boutons communs. */
+
+:root {
+  --color-cave: #140c0a;
+  --color-stone: #2a211d;
+  --color-stone-light: #4a3c34;
+  --color-felt: #4e1612;
+  --color-gold: #e0a63a;
+  --color-gold-pale: #f3d48a;
+  --color-gold-deep: #8a5a14;
+  --color-ember: #f2551d;
+  --color-bone: #efe4cc;
+  --color-bone-muted: #bfae90;
+  --color-verdigris: #3f8c78;
+  --color-ink: #221a16;
+
+  --font-display: "Grenze Gotisch", Georgia, serif;
+  --font-body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: clamp(2.25rem, 8vw, 4.5rem);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --gutter: max(16px, env(safe-area-inset-left));
+  --touch-size: 44px;
+  --radius-plaque: 6px;
+  --panel-bg: rgba(20, 12, 10, 0.78);
+  --focus-ring: 0 0 0 3px var(--color-cave), 0 0 0 5px var(--color-gold-pale);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--color-cave);
+  color: var(--color-bone);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Boutons en forme de plaques forgées. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-size);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: linear-gradient(180deg, #3a2e28, #251c18);
+  box-shadow: inset 0 1px 0 rgba(243, 212, 138, 0.12);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background-color 120ms ease, transform 120ms ease, opacity 120ms ease;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--color-gold-deep);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.button-primary {
+  border-color: var(--color-gold-pale);
+  background: linear-gradient(180deg, var(--color-gold-pale), var(--color-gold) 55%, #b9802a);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 18px rgba(224, 166, 58, 0.25);
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+.button-primary:hover:not(:disabled) {
+  border-color: #fff1c4;
+}
+
+.button-quiet {
+  background: transparent;
+  box-shadow: none;
+}
+
+.button-large {
+  min-height: 52px;
+  padding-inline: var(--space-8);
+  font-size: var(--text-lg);
+}
+
+.button-wide {
+  width: 100%;
+}
+
+kbd {
+  display: none;
+  padding: 0 0.35em;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+/* Les raccourcis clavier ne s'affichent que sur les écrans avec souris. */
+@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+  kbd {
+    display: inline-block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+}

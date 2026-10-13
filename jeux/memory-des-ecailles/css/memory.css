@@ -1,0 +1,129 @@
+/* Memory des écailles : choix du niveau et compteurs de partie. */
+
+.level-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.level-option {
+  display: grid;
+  min-height: var(--touch-size);
+  padding: var(--space-2);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  cursor: pointer;
+}
+
+.level-option[aria-pressed="true"] {
+  border-color: var(--color-gold-pale);
+  background: rgba(224, 166, 58, 0.16);
+}
+
+.level-name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: 1.1;
+  color: var(--color-gold-pale);
+}
+
+.level-detail {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+.counters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+  text-align: center;
+}
+
+.counters dt {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+.counters dd {
+  margin: 0;
+  color: var(--color-gold-pale);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.turn {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-gold-pale);
+}
+
+.turn[data-turn="dragon"] {
+  color: #ffb08a;
+}
+
+/* Vies en cœurs : pleins tant qu'il en reste, vides une fois perdus. */
+.counters .lives {
+  letter-spacing: 0.1em;
+  color: var(--color-ember);
+}
+
+.play-hint {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .level-picker,
+  .counters {
+    max-width: 34rem;
+  }
+}
+
+/* Mode à plusieurs : paires de chaque joueur, le joueur dont c'est le tour est encadré. */
+.party-scores {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.party-score {
+  display: grid;
+  min-width: 7rem;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.party-score[data-active="true"] {
+  border-color: var(--color-gold-pale);
+  box-shadow: 0 0 14px rgba(224, 166, 58, 0.45);
+}
+
+.party-score strong {
+  color: var(--color-gold-pale);
+}
+
+.party-end {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+
+.party-end-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-gold-pale);
+}

@@ -1,0 +1,95 @@
+/* Salon de jeu : contre des bots, créer ou rejoindre une partie en ligne. */
+
+.lobby {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  width: min(100%, 32rem);
+  margin: 0 auto;
+  padding: var(--space-4);
+  border: 1px solid var(--color-gold-deep);
+  border-radius: var(--radius-plaque);
+  background: rgba(28, 20, 17, 0.92);
+  text-align: center;
+}
+
+.lobby-label {
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+  text-align: left;
+}
+
+.lobby-input {
+  min-height: var(--touch-size);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: #120b09;
+  color: var(--color-bone);
+  font: inherit;
+  font-size: var(--text-lg);
+}
+
+.lobby-code-input {
+  font-family: "Courier New", Courier, monospace;
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lobby-choices {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.lobby-text {
+  color: var(--color-bone-muted);
+}
+
+/* Le code d'invitation, en gros caractères faciles à recopier. */
+.lobby-code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--color-gold-pale);
+  user-select: all;
+}
+
+.lobby-seats {
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lobby-seat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+}
+
+.lobby-seat-name {
+  flex: 1;
+  text-align: left;
+}
+
+.lobby-seat-tag {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+.lobby-small {
+  min-height: var(--touch-size);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-sm);
+}

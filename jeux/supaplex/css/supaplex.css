@@ -1,0 +1,332 @@
+/* Supaplex : liste des niveaux, compteurs et commandes tactiles. */
+
+/* Les flèches tactiles se tiennent appuyées : pas de défilement ni de sélection pendant le geste. */
+.stage canvas,
+.pad-button {
+  touch-action: none;
+  user-select: none;
+}
+
+/* Avec 14 niveaux, le menu défile à l'intérieur de la barre au lieu de couvrir tout l'écran. */
+#menu-panel {
+  max-width: 960px;
+  max-height: 62vh;
+  overflow-y: auto;
+}
+
+.level-series {
+  grid-column: 1 / -1;
+  margin-top: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-gold);
+}
+
+.game-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--color-gold-pale);
+}
+
+.level-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.level-button {
+  display: grid;
+  width: 100%;
+  min-height: var(--touch-size);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.level-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.level-button[data-done="true"] {
+  border-color: var(--color-gold-deep);
+}
+
+.level-number {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+.level-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: 1.1;
+  color: var(--color-gold-pale);
+}
+
+.level-status {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+/* Compteurs de la partie, en haut au centre (sous la barre du haut sur téléphone). */
+.play-stats {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  text-align: center;
+}
+
+.top-stats {
+  order: 3;
+  flex-basis: 100%;
+  justify-self: center;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .top-stats {
+    order: 0;
+    flex-basis: auto;
+  }
+}
+
+.play-stats dt {
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+.play-stats dd {
+  margin: 0;
+  color: var(--color-gold-pale);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Croix directionnelle : quatre boutons disposés en losange. */
+.touch-pad {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 52px);
+  grid-template-rows: repeat(3, 52px);
+}
+
+.pad-button {
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  font-size: var(--text-lg);
+  cursor: pointer;
+}
+
+.pad-button.is-held {
+  border-color: var(--color-gold-pale);
+  background: rgba(224, 166, 58, 0.25);
+}
+
+.pad-up { grid-area: 1 / 2; }
+.pad-left { grid-area: 2 / 1; }
+.pad-right { grid-area: 2 / 3; }
+.pad-down { grid-area: 3 / 2; }
+
+.pad-actions {
+  display: grid;
+  gap: var(--space-2);
+}
+
+#snap-toggle[aria-pressed="true"] {
+  border-color: var(--color-gold-pale);
+  background: rgba(224, 166, 58, 0.25);
+}
+
+/* Avec un clavier et une souris, les commandes tactiles sont inutiles. */
+@media (hover: hover) and (pointer: fine) {
+  .touch-pad {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .level-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: 960px;
+  }
+}
+
+/* Conseil du niveau : grand bandeau bien visible au départ, puis rappel discret dans la barre. */
+.hint-banner {
+  position: absolute;
+  top: 5.5rem;
+  left: 50%;
+  width: min(calc(100vw - 2 * var(--gutter)), 36rem);
+  padding: var(--space-4) var(--space-6);
+  border: 2px solid var(--color-gold);
+  border-radius: var(--radius-plaque);
+  background: rgba(20, 12, 10, 0.92);
+  box-shadow: 0 0 30px rgba(224, 166, 58, 0.35);
+  text-align: center;
+  transform: translateX(-50%);
+  animation: hint-in 300ms ease-out;
+  pointer-events: none;
+}
+
+@keyframes hint-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+}
+
+.hint-label {
+  color: var(--color-gold);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.hint-text {
+  margin-top: var(--space-1);
+  color: var(--color-bone);
+  font-size: var(--text-lg);
+  line-height: 1.35;
+}
+
+.level-hint {
+  max-width: 40rem;
+  color: var(--color-gold-pale);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.controls-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+}
+
+.controls-legend kbd {
+  display: inline-block;
+  margin-right: 2px;
+  opacity: 0.9;
+}
+
+/* Sur écran tactile, la croix remplace le rappel des touches. */
+@media (hover: none), (pointer: coarse) {
+  .controls-legend {
+    display: none;
+  }
+}
+
+/* Écran de choix de la version. */
+.version-picker {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--gutter);
+  background: radial-gradient(ellipse at 50% 40%, #2a1e19, var(--color-cave) 70%);
+  text-align: center;
+}
+
+.version-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  color: var(--color-gold-pale);
+}
+
+.version-intro {
+  max-width: 32rem;
+  color: var(--color-bone-muted);
+}
+
+.version-options {
+  display: grid;
+  gap: var(--space-4);
+  width: min(100%, 44rem);
+}
+
+.version-option {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  border: 2px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.version-option:hover {
+  border-color: var(--color-gold-pale);
+  transform: translateY(-2px);
+}
+
+.version-classic {
+  background: linear-gradient(160deg, #123a20, #0c0d10 70%);
+}
+
+.version-dragon {
+  background: linear-gradient(160deg, #4a1a12, #140c0a 70%);
+}
+
+.version-name {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-gold-pale);
+}
+
+.version-text {
+  color: var(--color-bone-muted);
+}
+
+@media (min-width: 768px) {
+  .version-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Version originale : compteurs façon afficheur rouge à diodes, comme le panneau du jeu d'origine. */
+[data-theme="classique"] .play-stats dd {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid #3a3e45;
+  border-radius: 4px;
+  background: #000000;
+  color: #ff3a2a;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 6px rgba(255, 58, 42, 0.8);
+}
+
+/* La barre du haut peut passer sur deux lignes (téléphone) pour accueillir les compteurs. */
+.hud-top {
+  flex-wrap: wrap;
+}

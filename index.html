@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>L’antre du dragon</title>
+  <meta name="description" content="La salle des mini-jeux de l’antre du dragon : choisis une alcôve et viens défier le dragon.">
+  <meta name="theme-color" content="#140c0a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=Grenze+Gotisch:wght@500;700&display=swap">
+  <link rel="stylesheet" href="shared/css/base.css">
+  <link rel="stylesheet" href="css/salle.css">
+</head>
+<body>
+  <main class="hall">
+    <div class="stage" id="stage"></div>
+
+    <header class="hall-top">
+      <h1 class="hall-title">L’antre du dragon</h1>
+      <p class="treasure">
+        <span class="treasure-label">Ton trésor</span>
+        <span class="treasure-amount"><span class="coin" aria-hidden="true"></span><span id="balance">0</span><span class="visually-hidden"> pièces d’or</span></span>
+      </p>
+    </header>
+
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+
+    <nav class="game-shelf" aria-label="Mini-jeux de l’antre">
+      <div class="carousel">
+        <button class="carousel-arrow" id="prev-game" type="button" aria-label="Jeu précédent">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <article class="game-card" id="game-card" aria-live="polite">
+          <p class="game-count" id="game-count"></p>
+          <h2 class="game-name" id="game-name"></h2>
+          <p class="game-tagline" id="game-tagline"></p>
+          <button class="button button-primary" id="enter-game" type="button">Entrer <kbd>Entrée</kbd></button>
+        </article>
+        <button class="carousel-arrow" id="next-game" type="button" aria-label="Jeu suivant">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <div class="veil" id="veil" aria-hidden="true"></div>
+  </main>
+
+  <section class="fallback" id="fallback" hidden>
+    <h2>Le dragon reste dans l’ombre</h2>
+    <p id="fallback-message"></p>
+  </section>
+
+  <noscript><p class="fallback">La salle des jeux a besoin de JavaScript pour fonctionner.</p></noscript>
+
+  <script src="shared/vendor/three.min.js" defer></script>
+  <script src="shared/js/tween.js" defer></script>
+  <script src="shared/js/profile.js" defer></script>
+  <script src="shared/js/boot.js" defer></script>
+  <script src="shared/js/particles.js" defer></script>
+  <script src="shared/js/lair.js" defer></script>
+  <script src="shared/js/dragon.js" defer></script>
+  <script src="js/games.js" defer></script>
+  <script src="js/alcoves.js" defer></script>
+  <script src="js/hall.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

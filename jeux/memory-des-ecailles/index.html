@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Memory des écailles</title>
+  <meta name="description" content="Retourne les écailles du dragon et retrouve les paires de motifs : moins tu fais d’erreurs, plus tu gagnes.">
+  <meta name="theme-color" content="#140c0a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=Grenze+Gotisch:wght@500;700&display=swap">
+  <link rel="stylesheet" href="../../shared/css/base.css">
+  <link rel="stylesheet" href="../../shared/css/game-hud.css">
+  <link rel="stylesheet" href="../../shared/css/game-overlays.css">
+  <link rel="stylesheet" href="../../shared/css/lobby.css">
+  <link rel="stylesheet" href="css/memory.css">
+</head>
+<body>
+  <main class="game">
+    <div class="stage" id="stage"></div>
+
+    <header class="hud-top">
+      <p class="treasure">
+        <span class="treasure-label">Ton trésor</span>
+        <span class="treasure-amount"><span class="coin" aria-hidden="true"></span><span id="balance">0</span><span class="visually-hidden"> pièces d’or</span></span>
+      </p>
+      <div class="hud-tools">
+        <a class="icon-button" href="../../index.html" aria-label="Retour à la salle des jeux">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </a>
+        <button class="icon-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="Couper le son">
+          <svg class="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+          <svg class="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+        </button>
+        <button class="icon-button" id="rules-open" type="button" aria-label="Règles">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/><circle cx="12" cy="12" r="9.5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+
+    <section class="dock" aria-label="Commandes du memory">
+      <div class="result" id="result" role="status" aria-live="assertive" hidden>
+        <p class="result-title" id="result-title"></p>
+        <p class="result-amount" id="result-amount"></p>
+      </div>
+
+      <div class="dock-panel" id="setup-panel">
+        <div class="level-picker" id="level-picker" role="group" aria-label="Niveau"></div>
+        <div class="bet-picker" id="bet-picker" role="group" aria-label="Mise"></div>
+        <button class="button button-primary button-wide" id="restore" type="button" hidden>Emprunter 1 000 pièces au dragon</button>
+        <button class="button button-primary button-large" id="start" type="button">Retourner les écailles <kbd>Entrée</kbd></button>
+        <button class="button button-quiet" id="party-open" type="button">Jouer à plusieurs (bots ou amis en ligne)</button>
+      </div>
+
+      <div class="dock-panel" id="lobby-panel" hidden></div>
+
+      <div class="dock-panel" id="party-panel" hidden>
+        <p class="turn" id="party-turn" aria-live="polite"></p>
+        <ul class="party-scores" id="party-scores" aria-label="Paires de chaque joueur"></ul>
+        <div class="party-end" id="party-end" hidden>
+          <p class="party-end-title" id="party-end-title"></p>
+          <button class="button button-primary" id="party-again" type="button">Nouvelle partie</button>
+        </div>
+        <button class="button button-quiet" id="party-quit" type="button">Quitter la partie</button>
+      </div>
+
+      <div class="dock-panel" id="play-panel" hidden>
+        <p class="turn" id="turn" aria-live="polite">À toi de jouer</p>
+        <dl class="counters">
+          <div><dt>Tes paires</dt><dd id="player-pairs">0</dd></div>
+          <div><dt>Vies</dt><dd class="lives" id="lives" aria-label="Vies : 3 sur 3"></dd></div>
+          <div><dt>Paires du dragon</dt><dd id="dragon-pairs">0</dd></div>
+        </dl>
+        <p class="play-hint">Clique sur deux écailles, ou utilise les flèches et Entrée.</p>
+        <button class="button button-quiet" id="give-up" type="button">Abandonner</button>
+      </div>
+
+      <div class="dock-panel" id="end-panel" hidden>
+        <button class="button button-primary button-large" id="again" type="button">Nouvelle partie <kbd>Entrée</kbd></button>
+      </div>
+    </section>
+
+    <p class="visually-hidden" id="announcer" aria-live="polite"></p>
+  </main>
+
+  <dialog class="sheet" id="rules" aria-labelledby="rules-title">
+    <h2 id="rules-title">Le memory des écailles</h2>
+    <ul class="rules-list">
+      <li>Tu affrontes le dragon : chacun son tour retourne deux écailles pour trouver une paire de motifs.</li>
+      <li>Une paire trouvée rapporte un point et fait rejouer. Une paire ratée passe la main.</li>
+      <li>Chaque paire que tu rates te coûte une vie : 3 en facile, 4 en moyen, 5 en difficile. Sans vie, tu as perdu.</li>
+      <li>Quand toutes les paires sont trouvées : plus de paires que le dragon double ta mise, l’égalité te la rend, moins de paires la lui laisse.</li>
+      <li>Le dragon retient les écailles qu’il a vues : un peu en facile, beaucoup en difficile. Surveille aussi ce qu’il retourne !</li>
+      <li>À plusieurs (2 à 4, bots ou amis en ligne avec un code d’invitation) : pas de mise ni de vies, celui qui a le plus de paires gagne.</li>
+      <li>Au clavier : les flèches déplacent le curseur doré, Entrée ou Espace retourne l’écaille.</li>
+    </ul>
+    <div class="sheet-actions">
+      <button class="button button-primary" id="rules-close" type="button">Retour à la dalle</button>
+    </div>
+  </dialog>
+
+  <section class="fallback" id="fallback" hidden>
+    <h2>Le dragon reste dans l’ombre</h2>
+    <p id="fallback-message"></p>
+  </section>
+
+  <noscript><p class="fallback">Ce jeu a besoin de JavaScript pour fonctionner.</p></noscript>
+
+  <script src="../../shared/vendor/three.min.js" defer></script>
+  <script src="../../shared/vendor/peerjs.min.js" defer></script>
+  <script src="../../shared/js/tween.js" defer></script>
+  <script src="../../shared/js/profile.js" defer></script>
+  <script src="../../shared/js/boot.js" defer></script>
+  <script src="../../shared/js/hud-kit.js" defer></script>
+  <script src="../../shared/js/audio.js" defer></script>
+  <script src="../../shared/js/particles.js" defer></script>
+  <script src="../../shared/js/lair.js" defer></script>
+  <script src="../../shared/js/dragon.js" defer></script>
+  <script src="../../shared/js/stage.js" defer></script>
+  <script src="../../shared/js/gold-rain.js" defer></script>
+  <script src="../../shared/js/lair-scene.js" defer></script>
+  <script src="js/core/memory.js" defer></script>
+  <script src="js/scene/tiles.js" defer></script>
+  <script src="../../shared/js/net.js" defer></script>
+  <script src="../../shared/js/lobby.js" defer></script>
+  <script src="js/party.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

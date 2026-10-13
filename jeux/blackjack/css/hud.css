@@ -1,0 +1,234 @@
+/* Interface propre au blackjack : totaux des mains et jetons de mise. */
+
+/* Totaux des mains, placés en JS au-dessus des cartes. */
+.hand-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid rgba(224, 166, 58, 0.5);
+  border-radius: 999px;
+  background: var(--panel-bg);
+  color: var(--color-bone-muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.hand-label strong {
+  margin-left: var(--space-2);
+  color: var(--color-bone);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 400;
+}
+
+.hand-label.is-active {
+  border-color: var(--color-gold-pale);
+  box-shadow: 0 0 14px rgba(224, 166, 58, 0.55);
+  color: var(--color-gold-pale);
+}
+
+.hand-label[data-tone="win"] {
+  border-color: var(--color-gold);
+  color: var(--color-gold-pale);
+}
+
+.hand-label[data-tone="lose"] {
+  border-color: var(--color-ember);
+}
+
+.hand-label.is-bust {
+  border-color: var(--color-ember);
+}
+
+.hand-label.is-bust strong {
+  color: var(--color-ember);
+}
+
+.bet-readout {
+  color: var(--color-bone-muted);
+}
+
+.bet-readout strong {
+  margin-left: var(--space-1);
+  color: var(--color-gold-pale);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* Jetons cliquables : mêmes couleurs que les jetons 3D sur la table. */
+.chip-button {
+  --chip-base: #e9dcc0;
+  --chip-stripe: #8a2a1c;
+  --chip-text: #5a1a12;
+  width: 56px;
+  height: 56px;
+  border: 4px dashed var(--chip-stripe);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--chip-base) 58%, var(--chip-stripe) 59%, var(--chip-stripe) 62%, var(--chip-base) 63%);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45), 0 0 0 2px var(--chip-base);
+  color: var(--chip-text);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  cursor: pointer;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.chip-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+
+.chip-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.chip-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.chip-25 {
+  --chip-base: #2f6f5f;
+  --chip-stripe: #efe4cc;
+  --chip-text: #efe4cc;
+}
+
+.chip-100 {
+  --chip-base: #d39a2e;
+  --chip-stripe: #3a0f0c;
+  --chip-text: #3a0f0c;
+}
+
+.chip-500 {
+  --chip-base: #2b1e2e;
+  --chip-stripe: #e0a63a;
+  --chip-text: #f3d48a;
+}
+
+@media (min-width: 768px) {
+  .chip-row {
+    gap: var(--space-4);
+  }
+
+  .chip-button {
+    width: 64px;
+    height: 64px;
+    font-size: var(--text-lg);
+  }
+}
+
+@media (min-width: 1100px) {
+  /* Sur grand écran, mise et actions tiennent sur une seule ligne. */
+  #bet-panel {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1000px;
+    gap: var(--space-6);
+  }
+
+  #bet-panel .action-row {
+    grid-auto-columns: auto;
+  }
+}
+
+/* Table à plusieurs : une étiquette par place (nom, total, mise ou gain), placée en JS. */
+.party-seat {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 7.5rem;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-stone-light);
+  border-radius: var(--radius-plaque);
+  background: var(--panel-bg);
+  font-size: var(--text-sm);
+  text-align: center;
+  pointer-events: none;
+}
+
+.party-seat p {
+  margin: 0;
+}
+
+.party-seat[data-local="true"] {
+  border-color: rgba(224, 166, 58, 0.6);
+}
+
+.party-seat[data-active="true"] {
+  border-color: var(--color-gold-pale);
+  box-shadow: 0 0 14px rgba(224, 166, 58, 0.55);
+}
+
+.party-seat-name {
+  color: var(--color-gold-pale);
+  font-family: var(--font-display);
+}
+
+.party-seat-hands {
+  color: var(--color-bone);
+  font-variant-numeric: tabular-nums;
+}
+
+.party-seat-bet {
+  color: var(--color-bone-muted);
+}
+
+.party-seat[data-tone="win"] .party-seat-bet {
+  color: var(--color-gold-pale);
+}
+
+.party-seat[data-tone="lose"] .party-seat-bet {
+  color: var(--color-ember);
+}
+
+.party-turn {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-gold-pale);
+  text-align: center;
+}
+
+.party-turn[data-turn="player"] {
+  color: #9affb4;
+}
+
+.party-step {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+
+/* Sur téléphone, les étiquettes des places restent compactes pour ne pas se chevaucher,
+   et les six mises tiennent sur une ligne pour garder la barre du bas basse. */
+@media (max-width: 600px) {
+  #party-bets {
+    flex-wrap: nowrap;
+    gap: var(--space-1);
+  }
+
+  #party-bets .bet-option {
+    padding: var(--space-1);
+    font-size: var(--text-md);
+  }
+
+  .party-step {
+    gap: var(--space-1);
+  }
+
+  .party-seat {
+    min-width: 0;
+    max-width: 23vw;
+    padding: 2px var(--space-1);
+    font-size: 0.7rem;
+  }
+}

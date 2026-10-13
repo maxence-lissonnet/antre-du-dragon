@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mille Bornes</title>
+  <meta name="description" content="Le Mille Bornes, règle française, contre des bots ou entre amis en ligne avec un code d’invitation.">
+  <meta name="theme-color" content="#140c0a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=Grenze+Gotisch:wght@500;700&display=swap">
+  <link rel="stylesheet" href="../../shared/css/base.css">
+  <link rel="stylesheet" href="../../shared/css/game-hud.css">
+  <link rel="stylesheet" href="../../shared/css/game-overlays.css">
+  <link rel="stylesheet" href="../../shared/css/lobby.css">
+  <link rel="stylesheet" href="css/mille-bornes.css">
+</head>
+<body>
+  <main class="game">
+    <div class="stage" id="stage"></div>
+
+    <header class="hud-top">
+      <p class="turn-banner" id="turn-banner">Mille Bornes</p>
+      <div class="hud-tools">
+        <a class="icon-button" href="../../index.html" aria-label="Retour à la salle des jeux">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </a>
+        <button class="icon-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="Couper le son">
+          <svg class="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+          <svg class="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+        </button>
+        <button class="icon-button" id="rules-open" type="button" aria-label="Règles">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/><circle cx="12" cy="12" r="9.5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Étiquettes des joueurs, placées en JS au-dessus de leur coin de table. -->
+    <div id="seat-labels"></div>
+
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+    <p class="action-log" id="action-log" aria-live="polite"></p>
+
+    <section class="dock" aria-label="Commandes du Mille Bornes">
+      <div class="dock-panel" id="lobby-panel"></div>
+
+      <div class="dock-panel" id="play-panel" hidden>
+        <div class="coup-fourre" id="coup-fourre" hidden>
+          <p><strong>Coup-fourré !</strong> Tu as la botte qui pare cette attaque. La jouer maintenant ?</p>
+          <div class="action-row">
+            <button class="button" id="cf-no" type="button">Non</button>
+            <button class="button button-primary" id="cf-yes" type="button">Coup-fourré !</button>
+          </div>
+        </div>
+        <div class="card-actions" id="card-actions" hidden></div>
+        <ul class="hand" id="hand" aria-label="Ta main"></ul>
+      </div>
+
+      <div class="dock-panel" id="end-panel" hidden>
+        <h2 class="end-title" id="end-title"></h2>
+        <div class="scores" id="scores"></div>
+        <button class="button button-primary" id="again" type="button">Nouvelle partie</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="sheet" id="rules" aria-labelledby="rules-title">
+    <h2 id="rules-title">Le Mille Bornes</h2>
+    <ul class="rules-list">
+      <li>But : être le premier à parcourir <strong>1000 bornes tout juste</strong>, en posant des cartes d’étape (25, 50, 75, 100, 200 bornes).</li>
+      <li>À ton tour, tu pioches une carte (automatique), puis tu en joues ou en défausses une.</li>
+      <li>Pour avancer, il te faut un <strong>feu vert</strong> sur ta pile de bataille.</li>
+      <li><strong>Attaques</strong> (feu rouge, panne d’essence, crevaison, accident) : à poser sur un adversaire qui roule. Il doit jouer la <strong>parade</strong> correspondante (feu vert, essence, roue de secours, réparations), puis un feu vert pour repartir.</li>
+      <li><strong>Limitation de vitesse</strong> : l’adversaire ne peut plus poser d’étape de plus de 50 bornes jusqu’à sa <strong>fin de limitation</strong>.</li>
+      <li><strong>Bottes</strong> (véhicule prioritaire, citerne d’essence, increvable, as du volant) : protègent pour toute la manche et font rejouer. Le véhicule prioritaire dispense du feu vert et protège du feu rouge et de la limitation.</li>
+      <li><strong>Coup-fourré</strong> : si on t’attaque alors que tu as la botte correspondante, tu peux la poser aussitôt. L’attaque est annulée, tu gagnes 300 points et c’est à toi de jouer.</li>
+      <li>Au plus deux étapes de 200 bornes par joueur. La manche s’arrête quand un joueur atteint 1000, ou quand toutes les cartes sont jouées.</li>
+      <li>Points : 1 par borne, 100 par botte (300 de plus pour les 4), 300 par coup-fourré, 400 pour le voyage achevé, 300 sans les 200, 300 si la pioche était vide, 500 si les adversaires n’ont pas bougé (capot). Le plus haut total gagne.</li>
+    </ul>
+    <div class="sheet-actions">
+      <button class="button button-primary" id="rules-close" type="button">Retour au jeu</button>
+    </div>
+  </dialog>
+
+  <section class="fallback" id="fallback" hidden>
+    <h2>Le dragon reste dans l’ombre</h2>
+    <p id="fallback-message"></p>
+  </section>
+
+  <noscript><p class="fallback">Ce jeu a besoin de JavaScript pour fonctionner.</p></noscript>
+
+  <script src="../../shared/vendor/three.min.js" defer></script>
+  <script src="../../shared/vendor/peerjs.min.js" defer></script>
+  <script src="../../shared/js/tween.js" defer></script>
+  <script src="../../shared/js/profile.js" defer></script>
+  <script src="../../shared/js/boot.js" defer></script>
+  <script src="../../shared/js/hud-kit.js" defer></script>
+  <script src="../../shared/js/audio.js" defer></script>
+  <script src="../../shared/js/particles.js" defer></script>
+  <script src="../../shared/js/lair.js" defer></script>
+  <script src="../../shared/js/dragon.js" defer></script>
+  <script src="../../shared/js/stage.js" defer></script>
+  <script src="../../shared/js/lair-scene.js" defer></script>
+  <script src="../../shared/js/net.js" defer></script>
+  <script src="../../shared/js/lobby.js" defer></script>
+  <script src="js/core/rules.js" defer></script>
+  <script src="js/core/bot.js" defer></script>
+  <script src="js/scene/cards.js" defer></script>
+  <script src="js/scene/table.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>
